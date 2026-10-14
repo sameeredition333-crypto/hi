@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TACOS 3D — The Most Extra Taco Joint</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        'display': ['Bebas Neue', 'sans-serif'],
+        'body': ['Space Grotesk', 'sans-serif'],
+        'serif': ['Instrument Serif', 'serif'],
+      },
+      colors: {
+        'taco-yellow': '#FFD23F',
+        'taco-orange': '#FF6B35',
+        'taco-red': '#EF4444',
+        'taco-lime': '#84CC16',
+        'taco-cream': '#FFF8E7',
+        'taco-brown': '#2C1810',
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { background: #FFF8E7; color: #2C1810; overflow-x: hidden; }
+  .grain { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E"); }
+  ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-thumb { background: #FF6B35; border-radius: 999px; }
+  .taco-shadow { box-shadow: 0 25px 50px -12px rgba(255,107,53,0.3); }
+</style>
+</head>
+<body class="font-body">
+  <!-- NAV -->
+  <nav class="fixed top-0 w-full z-50 bg-[#FFF8E7]/90 backdrop-blur-xl border-b-2 border-taco-brown">
+    <div class="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-8">
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-10 bg-taco-orange rounded-xl flex items-center justify-center rotate-3 border-2 border-taco-brown">
+            <span class="text-xl">🌮</span>
+          </div>
+          <span class="font-display text-3xl tracking-tight">TACOS<span class="text-taco-orange">3D</span></span>
+          <span class="hidden md:block ml-2 px-2 py-0.5 bg-taco-yellow border-2 border-taco-brown rounded-full text-xs font-bold -rotate-2">EST. 2024</span>
+        </div>
+        <div class="hidden lg:flex items-center gap-6 font-bold text-sm">
+          <a href="#builder" class="hover:text-taco-orange transition">BUILD</a>
+          <a href="#menu" class="hover:text-taco-orange transition">MENU</a>
+          <a href="#locations" class="hover:text-taco-orange transition">LOCATIONS</a>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="hidden md:flex items-center gap-2 bg-white border-2 border-taco-brown rounded-full px-4 py-2">
+          <i class="fa-solid fa-location-dot text-taco-orange"></i>
+          <span class="text-sm font-bold">Pickup in 12 min</span>
+          <span class="w-2 h-2 bg-taco-lime rounded-full animate-pulse"></span>
+        </div>
+        <button onclick="toggleCart()" class="relative bg-taco-brown text-white rounded-full px-6 py-3 font-bold flex items-center gap-2 hover:scale-105 transition">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="hidden sm:inline">CART</span>
+          <span id="cartCount" class="bg-taco-yellow text-taco-brown w-6 h-6 rounded-full text-xs flex items-center justify-center font-black">0</span>
+        </button>
+        <button class="lg:hidden text-2xl p-2" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="hidden lg:hidden border-t-2 border-taco-brown bg-white px-6 py-4 flex flex-col gap-3 font-bold">
+      <a href="#builder">BUILD YOUR TACO</a><a href="#menu">MENU</a><a href="#locations">LOCATIONS</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="pt-28 pb-10 overflow-hidden relative">
+    <div class="max-w-[1400px] mx-auto px-6 grid lg:grid-cols-2 gap-8 items-center">
+      <!-- LEFT -->
+      <div class="relative z-10">
+        <div class="inline-flex items-center gap-2 bg-white border-2 border-taco-brown rounded-full px-4 py-1 rotate-1">
+          <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+          <span class="text-xs font-black tracking-widest">LIVE 3D • DRAG TO SPIN THE TACO</span>
+        </div>
+        <h1 class="font-display text-[68px] md:text-[92px] leading-[0.85] mt-4">
+          TACOS<br>
+          <span class="relative inline-block">BUT MAKE IT
+            <span class="absolute -right-6 -top-2 bg-taco-yellow border-2 border-taco-brown px-3 py-1 rounded-full text-lg rotate-3 font-body font-black">EXTRA!</span>
+          </span><br>
+          <span class="text-taco-orange" style="-webkit-text-stroke: 2px #2C1810;">3D</span>
+        </h1>
+        <p class="font-serif italic text-xl md:text-2xl mt-4 max-w-lg leading-tight">
+          Not your abuela's tacos. Build, spin, stack & devour in full 3D. Fresh-pressed tortillas, 12-hr meats, unhinged flavors.
+        </p>
+        <div class="flex flex-wrap gap-3 mt-8">
+          <a href="#builder" class="bg-taco-orange border-2 border-taco-brown text-white px-8 py-4 rounded-full font-black text-lg shadow-[4px_4px_0px_#2C1810] hover:translate-y-1 hover:shadow-[2px_2px_0px_#2C1810] transition flex items-center gap-2">
+            BUILD YOUR TACO <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <button onclick="spinTaco()" class="bg-white border-2 border-taco-brown px-8 py-4 rounded-full font-black text-lg hover:bg-taco-yellow transition">
+            <i class="fa-solid fa-rotate mr-2"></i> SPIN IT
+          </button>
+        </div>
+        <div class="flex items-center gap-6 mt-8">
+          <div class="flex -space-x-2">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" class="w-10 h-10 rounded-full border-2 border-taco-brown object-cover">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" class="w-10 h-10 rounded-full border-2 border-taco-brown object-cover">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="w-10 h-10 rounded-full border-2 border-taco-brown object-cover">
+          </div>
+          <div class="text-sm">
+            <div class="flex text-taco-orange"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <div class="font-bold">4.9/5 from 2,847 tacoheads</div>
+          </div>
+          <div class="hidden md:block h-12 w-px bg-taco-brown/20"></div>
+          <div class="hidden md:block">
+            <div class="font-black text-2xl leading-none">50K+</div>
+            <div class="text-xs font-bold opacity-60">TACOS SPUN TODAY</div>
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT 3D CANVAS -->
+      <div class="relative lg:h-[620px] h-[520px]">
+        <div class="absolute inset-0 bg-taco-yellow rounded-[40px] border-[3px] border-taco-brown rotate-1"></div>
+        <div class="absolute inset-0 bg-white rounded-[40px] border-[3px] border-taco-brown overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between px-6 py-4 border-b-2 border-taco-brown bg-taco-cream">
+            <span class="font-black text-sm tracking-widest flex items-center gap-2"><span class="w-3 h-3 bg-red-500 rounded-full border border-taco-brown"></span><span class="w-3 h-3 bg-yellow-400 rounded-full border border-taco-brown"></span><span class="w-3 h-3 bg-green-500 rounded-full border border-taco-brown"></span> TACO_VIEWER 3D</span>
+            <span class="text-xs font-bold bg-taco-brown text-white px-3 py-1 rounded-full">DRAG • SCROLL TO ZOOM</span>
+          </div>
+          <div class="flex-1 relative bg-gradient-to-b from-[#FFF8E7] to-[#FFEBCF]">
+            <canvas id="tacoCanvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white border-2 border-taco-brown rounded-full px-4 py-2 shadow-lg">
+              <button onclick="setTacoView('front')" class="w-8 h-8 rounded-full bg-taco-brown text-white flex items-center justify-center text-xs"><i class="fa-solid fa-eye"></i></button>
+              <button onclick="setTacoView('top')" class="w-8 h-8 rounded-full bg-white border-2 border-taco-brown flex items-center justify-center text-xs hover:bg-taco-yellow"><i class="fa-solid fa-arrow-up"></i></button>
+              <button onclick="autoRotateToggle()" id="autoBtn" class="w-8 h-8 rounded-full bg-taco-orange text-white border-2 border-taco-brown flex items-center justify-center text-xs"><i class="fa-solid fa-rotate"></i></button>
+              <span class="text-xs font-black ml-1 hidden sm:block">360° VIEW</span>
+            </div>
+            <div class="absolute top-4 left-4 bg-taco-orange text-white border-2 border-taco-brown rounded-2xl px-4 py-2 rotate-[-2deg] shadow-[3px_3px_0px_#2C1810]">
+              <div class="text-[10px] font-black tracking-widest">TODAY'S SPECIAL</div>
+              <div class="font-display text-xl leading-none">BIRRIA BOOM!</div>
+            </div>
+            <div class="absolute top-4 right-4 bg-white border-2 border-taco-brown rounded-full px-3 py-1 font-bold text-xs flex items-center gap-1">
+              <span class="w-2 h-2 bg-taco-lime rounded-full animate-pulse"></span> FRESH & HOT
+            </div>
+          </div>
+          <div class="px-6 py-4 bg-white border-t-2 border-taco-brown flex items-center justify-between">
+            <div>
+              <div class="font-black text-lg leading-none" id="heroTacoName">The Classic 3D Taco</div>
+              <div class="text-xs font-bold opacity-60" id="heroTacoPrice">$8.50 • 420 cal</div>
+            </div>
+            <button onclick="addToCartCurrent()" class="bg-taco-brown text-white px-5 py-2.5 rounded-full font-black text-sm hover:bg-black transition">ADD TO CART +</button>
+          </div>
+        </div>
+        <!-- floating badges -->
+        <div class="absolute -left-4 top-20 bg-white border-2 border-taco-brown rounded-2xl px-3 py-2 shadow-[4px_4px_0px_#2C1810] rotate-2 hidden md:block">
+          <div class="text-xs font-black">🔥 1,500° FLAME-GRILLED</div>
+        </div>
+        <div class="absolute -right-2 bottom-24 bg-taco-lime border-2 border-taco-brown rounded-2xl px-3 py-2 shadow-[4px_4px_0px_#2C1810] -rotate-2 hidden md:block">
+          <div class="text-xs font-black">🥑 EXTRA GUAC FREE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILDER -->
+  <section id="builder" class="max-w-[1400px] mx-auto px-6 py-12">
+    <div class="rounded-[32px] border-[3px] border-taco-brown overflow-hidden bg-white taco-shadow">
+      <div class="grid lg:grid-cols-[1.1fr_0.9fr]">
+        <!-- controls -->
+        <div class="p-8 md:p-10">
+          <div class="flex items-center gap-3">
+            <span class="bg-taco-yellow border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs rotate-1">STEP 01 — 04</span>
+            <span class="font-black text-sm tracking-widest opacity-60">TACO LABORATORY</span>
+          </div>
+          <h2 class="font-display text-5xl mt-3 leading-none">BUILD YOUR<br><span class="text-taco-orange">DREAM TACO</span></h2>
+          <p class="opacity-60 font-medium mt-2">Watch it transform in 3D in real-time. Stack it till it drops.</p>
+
+          <!-- protein -->
+          <div class="mt-8">
+            <div class="flex items-center justify-between">
+              <h3 class="font-black text-sm tracking-widest">01 PROTEIN</h3>
+              <span class="text-xs font-bold opacity-50">CHOOSE 1</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+              <button onclick="selectProtein('birria')" data-protein="birria" class="protein-btn active bg-taco-orange text-white border-2 border-taco-brown rounded-2xl p-3 text-left">
+                <div class="text-2xl">🥩</div><div class="font-black text-sm">Birria</div><div class="text-xs opacity-80">+$1.50</div>
+              </button>
+              <button onclick="selectProtein('alpastor')" data-protein="alpastor" class="protein-btn bg-white border-2 border-taco-brown rounded-2xl p-3 text-left hover:bg-taco-cream">
+                <div class="text-2xl">🍖</div><div class="font-black text-sm">Al Pastor</div><div class="text-xs opacity-60">+$0</div>
+              </button>
+              <button onclick="selectProtein('carnitas')" data-protein="carnitas" class="protein-btn bg-white border-2 border-taco-brown rounded-2xl p-3 text-left hover:bg-taco-cream">
+                <div class="text-2xl">🐖</div><div class="font-black text-sm">Carnitas</div><div class="text-xs opacity-60">+$0</div>
+              </button>
+              <button onclick="selectProtein('mushroom')" data-protein="mushroom" class="protein-btn bg-white border-2 border-taco-brown rounded-2xl p-3 text-left hover:bg-taco-cream">
+                <div class="text-2xl">🍄</div><div class="font-black text-sm">Mushroom</div><div class="text-xs opacity-60">Vegan</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- toppings -->
+          <div class="mt-6">
+            <h3 class="font-black text-sm tracking-widest">02 STACK IT (3D!)</h3>
+            <div class="grid grid-cols-3 gap-3 mt-3">
+              <button onclick="toggleTopping('cheese')" data-topping="cheese" class="topping-btn active border-2 border-taco-brown rounded-2xl p-3 bg-taco-yellow">
+                <div class="text-xl">🧀</div><div class="font-black text-xs">Queso Melt</div><div class="text-[10px] font-bold opacity-60">ON</div>
+              </button>
+              <button onclick="toggleTopping('guac')" data-topping="guac" class="topping-btn active border-2 border-taco-brown rounded-2xl p-3 bg-taco-lime">
+                <div class="text-xl">🥑</div><div class="font-black text-xs">Guac</div><div class="text-[10px] font-bold opacity-60">ON</div>
+              </button>
+              <button onclick="toggleTopping('pico')" data-topping="pico" class="topping-btn active border-2 border-taco-brown rounded-2xl p-3 bg-red-400">
+                <div class="text-xl">🍅</div><div class="font-black text-xs">Pico</div><div class="text-[10px] font-bold opacity-60">ON</div>
+              </button>
+              <button onclick="toggleTopping('onion')" data-topping="onion" class="topping-btn border-2 border-taco-brown rounded-2xl p-3 bg-white">
+                <div class="text-xl">🧅</div><div class="font-black text-xs">Onion</div><div class="text-[10px] font-bold opacity-60">OFF</div>
+              </button>
+              <button onclick="toggleTopping('jalapeno')" data-topping="jalapeno" class="topping-btn border-2 border-taco-brown rounded-2xl p-3 bg-white">
+                <div class="text-xl">🌶️</div><div class="font-black text-xs">Jalapeño</div><div class="text-[10px] font-bold opacity-60">OFF</div>
+              </button>
+              <button onclick="toggleTopping('cilantro')" data-topping="cilantro" class="topping-btn active border-2 border-taco-brown rounded-2xl p-3 bg-green-200">
+                <div class="text-xl">🌿</div><div class="font-black text-xs">Cilantro</div><div class="text-[10px] font-bold opacity-60">ON</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- sauce & extras -->
+          <div class="mt-6 grid md:grid-cols-2 gap-4">
+            <div>
+              <h3 class="font-black text-sm tracking-widest">03 SAUCE DRIP</h3>
+              <div class="flex gap-2 mt-3">
+                <button onclick="selectSauce('chipotle')" data-sauce="chipotle" class="sauce-btn flex-1 bg-taco-brown text-white border-2 border-taco-brown rounded-full py-2.5 font-black text-xs">CHIPOTLE</button>
+                <button onclick="selectSauce('verde')" data-sauce="verde" class="sauce-btn flex-1 bg-white border-2 border-taco-brown rounded-full py-2.5 font-black text-xs">VERDE</button>
+                <button onclick="selectSauce('habanero')" data-sauce="habanero" class="sauce-btn flex-1 bg-white border-2 border-taco-brown rounded-full py-2.5 font-black text-xs">HABANERO 🔥</button>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-black text-sm tracking-widest">04 TORTILLA</h3>
+              <div class="flex gap-2 mt-3">
+                <button onclick="selectShell('corn')" data-shell="corn" class="shell-btn flex-1 bg-taco-yellow border-2 border-taco-brown rounded-full py-2.5 font-black text-xs">CORN</button>
+                <button onclick="selectShell('flour')" data-shell="flour" class="shell-btn flex-1 bg-white border-2 border-taco-brown rounded-full py-2.5 font-black text-xs">FLOUR</button>
+                <button onclick="selectShell('blue')" data-shell="blue" class="shell-btn flex-1 bg-white border-2 border-taco-brown rounded-full py-2.5 font-black text-xs">BLUE CORN</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 flex items-center gap-3 bg-taco-cream border-2 border-taco-brown rounded-2xl p-4">
+            <div class="flex-1">
+              <div class="text-xs font-black tracking-widest opacity-60">HEAT LEVEL</div>
+              <input type="range" min="1" max="5" value="3" id="heatRange" oninput="updateHeat(this.value)" class="w-full accent-[#FF6B35]">
+            </div>
+            <div id="heatLabel" class="bg-taco-orange text-white border-2 border-taco-brown rounded-full px-4 py-2 font-black text-sm">🌶️🌶️🌶️ MEDIUM</div>
+          </div>
+        </div>
+
+        <!-- preview -->
+        <div class="bg-taco-cream border-t-[3px] lg:border-t-0 lg:border-l-[3px] border-taco-brown p-8 md:p-10 flex flex-col">
+          <div class="flex items-center justify-between">
+            <span class="font-black text-xs tracking-widest bg-white border-2 border-taco-brown rounded-full px-3 py-1">LIVE PREVIEW</span>
+            <span class="font-black text-xs">3D • 60 FPS</span>
+          </div>
+          <div class="flex-1 bg-white border-2 border-taco-brown rounded-[24px] mt-4 relative overflow-hidden flex flex-col items-center justify-center p-6 min-h-[340px]">
+            <canvas id="builderCanvas" class="absolute inset-0 w-full h-full"></canvas>
+            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+              <span class="bg-taco-brown text-white text-[10px] font-black px-3 py-1 rounded-full">DRAG TO ROTATE</span>
+              <span class="bg-taco-yellow border-2 border-taco-brown text-[10px] font-black px-3 py-1 rounded-full" id="calories">~ 420 CAL</span>
+            </div>
+          </div>
+          <div class="mt-4 bg-white border-2 border-taco-brown rounded-2xl p-4 flex items-center justify-between">
+            <div>
+              <div class="font-display text-2xl leading-none" id="builderName">BIRRIA BOOM TACO</div>
+              <div class="text-xs font-bold opacity-60" id="builderDesc">corn • birria • queso • guac • pico • cilantro • chipotle</div>
+            </div>
+            <div class="text-right">
+              <div class="font-black text-2xl" id="builderPrice">$9.50</div>
+              <div class="text-xs font-bold opacity-60">each</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3 mt-4">
+            <button onclick="randomizeTaco()" class="bg-white border-2 border-taco-brown rounded-full py-3 font-black hover:bg-taco-yellow transition"><i class="fa-solid fa-shuffle mr-2"></i> RANDOMIZE</button>
+            <button onclick="addToCartCurrent()" class="bg-taco-orange border-2 border-taco-brown rounded-full py-3 font-black text-white shadow-[3px_3px_0px_#2C1810] hover:translate-y-1 hover:shadow-[1px_1px_0px_#2C1810] transition">ADD TO CART — <span id="builderPriceBtn">$9.50</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section id="menu" class="max-w-[1400px] mx-auto px-6 py-10">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <div class="inline-flex bg-taco-brown text-white rounded-full px-4 py-1 font-black text-xs tracking-widest">MENU FAVORITES • TAP TO ADD 3D</div>
+        <h2 class="font-display text-5xl mt-3 leading-none">MOST<br><span class="text-taco-orange">LOVED TACOS</span></h2>
+      </div>
+      <div class="flex gap-2">
+        <button class="bg-white border-2 border-taco-brown rounded-full px-5 py-2 font-black text-sm">ALL</button>
+        <button class="bg-taco-yellow border-2 border-taco-brown rounded-full px-5 py-2 font-black text-sm">🔥 SPICY</button>
+        <button class="bg-taco-lime border-2 border-taco-brown rounded-full px-5 py-2 font-black text-sm">🌱 VEGAN</button>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+      <!-- card 1 -->
+      <div class="bg-white border-[3px] border-taco-brown rounded-[28px] overflow-hidden taco-shadow group hover:-translate-y-1 transition">
+        <div class="h-56 relative overflow-hidden bg-taco-cream">
+          <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <span class="absolute top-3 left-3 bg-taco-yellow border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs">BESTSELLER</span>
+          <span class="absolute top-3 right-3 bg-white border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs">$11.50</span>
+          <span class="absolute bottom-3 left-3 bg-taco-brown text-white rounded-full px-3 py-1 font-black text-xs flex items-center gap-1"><i class="fa-solid fa-cube"></i> 3D VIEW</span>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display text-2xl leading-none">BIRRIA QUESA TACO</h3>
+          <p class="text-sm opacity-60 font-medium leading-tight mt-1">24h braised beef, Oaxacan cheese, consomé dip, pickled onions.</p>
+          <div class="flex gap-2 mt-3 text-[10px] font-black">
+            <span class="bg-red-100 border border-taco-brown rounded-full px-2 py-1">🌶️🌶️🌶️</span>
+            <span class="bg-yellow-100 border border-taco-brown rounded-full px-2 py-1">🧀 EXTRA CHEESE</span>
+          </div>
+          <button onclick="addItem('Birria Quesa Taco', 11.5)" class="w-full mt-4 bg-taco-brown text-white rounded-full py-3 font-black hover:bg-black transition">ADD TO CART +</button>
+        </div>
+      </div>
+      <!-- card 2 -->
+      <div class="bg-white border-[3px] border-taco-brown rounded-[28px] overflow-hidden taco-shadow group hover:-translate-y-1 transition">
+        <div class="h-56 relative overflow-hidden bg-taco-cream">
+          <img src="https://images.unsplash.com/photo-1551506448-074afa034c05?w=600" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <span class="absolute top-3 left-3 bg-taco-orange text-white border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs">NEW DROP</span>
+          <span class="absolute top-3 right-3 bg-white border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs">$9.00</span>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display text-2xl leading-none">AL PASTOR NEON</h3>
+          <p class="text-sm opacity-60 font-medium leading-tight mt-1">Pineapple-marinated pork, charred salsa verde, lime crema.</p>
+          <button onclick="addItem('Al Pastor Neon', 9.0)" class="w-full mt-4 bg-white border-2 border-taco-brown rounded-full py-3 font-black hover:bg-taco-yellow transition">ADD TO CART +</button>
+        </div>
+      </div>
+      <!-- card 3 -->
+      <div class="bg-white border-[3px] border-taco-brown rounded-[28px] overflow-hidden taco-shadow group hover:-translate-y-1 transition">
+        <div class="h-56 relative overflow-hidden bg-taco-cream">
+          <img src="https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=600" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <span class="absolute top-3 left-3 bg-taco-lime border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs">VEGAN • 3D</span>
+          <span class="absolute top-3 right-3 bg-white border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs">$8.50</span>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display text-2xl leading-none">SHROOM & AVOCADO</h3>
+          <p class="text-sm opacity-60 font-medium leading-tight mt-1">Smoked oyster mushrooms, smashed avo, toasted pepitas.</p>
+          <button onclick="addItem('Shroom & Avocado', 8.5)" class="w-full mt-4 bg-white border-2 border-taco-brown rounded-full py-3 font-black hover:bg-taco-yellow transition">ADD TO CART +</button>
+        </div>
+      </div>
+      <div class="bg-white border-[3px] border-taco-brown rounded-[28px] overflow-hidden taco-shadow group hover:-translate-y-1 transition">
+        <div class="h-56 relative overflow-hidden bg-taco-cream">
+          <img src="https://images.unsplash.com/photo-1611250188496-e966043a0629?w=600" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <span class="absolute top-3 right-3 bg-white border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs">$10.00</span>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display text-2xl leading-none">CRISPY FISH BAJA</h3>
+          <p class="text-sm opacity-60 font-medium leading-tight mt-1">Beer-battered cod, cabbage slaw, chipotle mayo, lime.</p>
+          <button onclick="addItem('Crispy Fish Baja', 10.0)" class="w-full mt-4 bg-white border-2 border-taco-brown rounded-full py-3 font-black hover:bg-taco-yellow transition">ADD TO CART +</button>
+        </div>
+      </div>
+      <div class="bg-white border-[3px] border-taco-brown rounded-[28px] overflow-hidden taco-shadow group hover:-translate-y-1 transition">
+        <div class="h-56 relative overflow-hidden bg-taco-cream">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <span class="absolute top-3 left-3 bg-taco-yellow border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs">LIMITED</span>
+          <span class="absolute top-3 right-3 bg-white border-2 border-taco-brown rounded-full px-3 py-1 font-black text-xs">$12.00</span>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display text-2xl leading-none">TRUFFLE CARNITAS</h3>
+          <p class="text-sm opacity-60 font-medium leading-tight mt-1">Slow carnitas, truffle crema, pickled jalapeños, micro cilantro.</p>
+          <button onclick="addItem('Truffle Carnitas', 12.0)" class="w-full mt-4 bg-taco-brown text-white rounded-full py-3 font-black hover:bg-black transition">ADD TO CART +</button>
+        </div>
+      </div>
+      <div class="bg-taco-yellow border-[3px] border-taco-brown rounded-[28px] p-6 flex flex-col justify-center taco-shadow">
+        <div class="text-4xl">🎉</div>
+        <h3 class="font-display text-3xl leading-none mt-2">WANT IT ALL?<br>TRY THE BOX</h3>
+        <p class="font-medium opacity-70 text-sm mt-2">12 tacos, 3 dips, consomé, churros. Built for crew.</p>
+        <div class="flex items-center gap-3 mt-4">
+          <span class="font-black text-2xl">$54.00</span><span class="line-through opacity-50 font-bold">$68.00</span>
+        </div>
+        <button onclick="addItem('Mega 3D Taco Box (12 pcs)', 54.0)" class="mt-4 bg-taco-brown text-white rounded-full py-3 font-black">ADD BOX TO CART</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCATIONS + FOOTER -->
+  <section id="locations" class="bg-taco-brown text-taco-cream mt-12">
+    <div class="max-w-[1400px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-8">
+      <div>
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-10 bg-taco-yellow rounded-xl flex items-center justify-center border-2 border-white rotate-3">🌮</div>
+          <span class="font-display text-3xl">TACOS3D</span>
+        </div>
+        <p class="opacity-70 mt-3 text-sm leading-relaxed">We make tacos you can see before you eat. Spin it, stack it, screenshot it, eat it. Open daily 11am — 11pm.</p>
+        <div class="flex gap-2 mt-4">
+          <a href="#" class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-taco-brown transition"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-taco-brown transition"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-taco-brown transition"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-black tracking-widest text-xs opacity-60">LOCATIONS</h4>
+        <div class="mt-4 space-y-3 text-sm">
+          <div class="flex justify-between bg-white/5 rounded-xl px-4 py-3 border border-white/10"><span><b>Downtown</b><br>127 Taco St, LA</span><span class="text-taco-lime font-black">OPEN</span></div>
+          <div class="flex justify-between bg-white/5 rounded-xl px-4 py-3 border border-white/10"><span><b>Venice Beach</b><br>89 Boardwalk, LA</span><span class="text-taco-lime font-black">OPEN</span></div>
+          <div class="flex justify-between bg-white/5 rounded-xl px-4 py-3 border border-white/10"><span><b>Arts District</b><br>402 S Alameda</span><span class="text-taco-yellow font-black">BUSY</span></div>
+        </div>
+      </div>
+      <div class="bg-white text-taco-brown rounded-[24px] p-6 border-2 border-taco-brown">
+        <h4 class="font-display text-2xl leading-none">GET 20% OFF YOUR FIRST 3D ORDER</h4>
+        <p class="text-sm opacity-60 mt-1">We’ll spin you a coupon.</p>
+        <form onsubmit="event.preventDefault(); alert('Coupon sent! 🌮 Check your email.'); this.reset();" class="flex gap-2 mt-4">
+          <input required type="email" placeholder="your email" class="flex-1 border-2 border-taco-brown rounded-full px-4 py-3 font-bold text-sm outline-none">
+          <button class="bg-taco-orange border-2 border-taco-brown rounded-full px-6 py-3 font-black text-white whitespace-nowrap">GET CODE</button>
+        </form>
+        <div class="text-[10px] font-bold opacity-50 mt-2">No spam. Just tacos. Unsubscribe anytime.</div>
+      </div>
+    </div>
+    <div class="border-t border-white/10 text-center py-4 text-xs font-bold opacity-50">© 2024 TACOS3D — Built extra. Served hot. • Made with 🌮 & Three.js</div>
+  </section>
+
+  <!-- CART DRAWER -->
+  <div id="cartDrawer" class="fixed inset-0 z-[60] hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleCart()"></div>
+    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-[#FFF8E7] border-l-[3px] border-taco-brown flex flex-col">
+      <div class="p-6 border-b-2 border-taco-brown flex items-center justify-between bg-white">
+        <h3 class="font-display text-3xl">YOUR CART 🌮</h3>
+        <button onclick="toggleCart()" class="w-10 h-10 bg-taco-brown text-white rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="cartItems" class="flex-1 overflow-auto p-6 space-y-3">
+        <div class="text-center py-10 opacity-50">
+          <div class="text-5xl mb-3">🛒</div>
+          <div class="font-black">Your cart is empty</div>
+          <div class="text-sm">Build a 3D taco and add it!</div>
+        </div>
+      </div>
+      <div class="p-6 bg-white border-t-2 border-taco-brown">
+        <div class="flex justify-between font-black text-lg"><span>Subtotal</span><span id="cartTotal">$0.00</span></div>
+        <div class="flex justify-between text-sm opacity-60 font-bold"><span>Delivery</span><span>Calculated at checkout</span></div>
+        <button onclick="checkout()" class="w-full mt-4 bg-taco-orange border-2 border-taco-brown rounded-full py-4 font-black text-white shadow-[4px_4px_0px_#2C1810]">CHECKOUT • SPIN TO WIN →</button>
+        <div class="text-center text-[10px] font-black opacity-50 mt-2">🔒 SECURE CHECKOUT • APPLE PAY • GOOGLE PAY</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-taco-brown text-white px-6 py-3 rounded-full font-black text-sm border-2 border-white shadow-xl hidden z-50">Added to cart! 🌮</div>
+
+<script type="module">
+import * as THREE from 'three';
+
+// STATE
+let cart = [];
+let state = {
+  protein: 'birria',
+  toppings: { cheese: true, guac: true, pico: true, onion: false, jalapeno: false, cilantro: true },
+  sauce: 'chipotle',
+  shell: 'corn',
+  heat: 3
+};
+
+const prices = { base: 8.0, birria: 1.5, alpastor: 0, carnitas: 0, mushroom: 0, topping: 0.5 };
+const heatLabels = ['','🌶️ MILD','🌶️🌶️ MED','🌶️🌶️🌶️ MEDIUM','🌶️🌶️🌶️🌶️ HOT','🌶️🌶️🌶️🌶️🌶️ DIABLO'];
+
+// THREE SETUP helper
+function createTacoScene(canvas) {
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+  camera.position.set(0, 1.5, 8);
+  scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+  const dir = new THREE.DirectionalLight(0xffffff, 1); dir.position.set(3,5,2); scene.add(dir);
+  const dir2 = new THREE.DirectionalLight(0xffe4b5, 0.6); dir2.position.set(-3,2,-2); scene.add(dir2);
+  const group = new THREE.Group(); scene.add(group);
+  
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize); resize();
+
+  // drag rotate
+  let isDrag=false, lastX=0, auto=true, rotY=0.3, rotX=0.1, targetY=0.3;
+  canvas.addEventListener('pointerdown', e=>{ isDrag=true; lastX=e.clientX; canvas.setPointerCapture(e.pointerId); auto=false; });
+  window.addEventListener('pointerup', ()=> isDrag=false);
+  window.addEventListener('pointermove', e=>{
+    if(!isDrag) return;
+    const dx = e.clientX - lastX; lastX=e.clientX;
+    targetY += dx*0.01;
+  });
+  canvas.addEventListener('wheel', e=>{
+    e.preventDefault();
+    camera.position.z = Math.min(10, Math.max(5, camera.position.z + e.deltaY*0.01));
+  }, {passive:false});
+
+  function buildTaco() {
+    group.clear();
+    // shell color per type
+    const shellColors = { corn: 0xE8B84B, flour: 0xF5E6C8, blue: 0x7A9CB5 };
+    const shellMat = new THREE.MeshStandardMaterial({ color: shellColors[state.shell]||0xE8B84B, roughness: 0.9, side: THREE.DoubleSide });
+    // bottom half cylinder as taco shell (open top)
+    const shellGeo = new THREE.CylinderGeometry(2.4, 2.4, 4.5, 32, 1, true, 0, Math.PI);
+    const shell = new THREE.Mesh(shellGeo, shellMat);
+    shell.rotation.z = Math.PI/2;
+    shell.rotation.x = Math.PI/2;
+    shell.position.y = -0.3;
+    group.add(shell);
+    // caps
+    const edgeMat = new THREE.MeshStandardMaterial({ color: 0xC99A2B });
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.07, 8, 32, Math.PI), edgeMat);
+    rim.rotation.y = Math.PI/2; rim.position.y = -0.3; rim.position.z = 2.25; group.add(rim.clone()); rim.position.z = -2.25; group.add(rim);
+
+    // protein base
+    const proteinColors = { birria: 0x6B2D1F, alpastor: 0xB94E2E, carnitas: 0xD9A679, mushroom: 0x8B7355 };
+    const prot = new THREE.Mesh(new THREE.SphereGeometry(1.6, 16, 12), new THREE.MeshStandardMaterial({ color: proteinColors[state.protein], roughness: 0.8 }));
+    prot.scale.set(1.4, 0.5, 0.8); prot.position.y = 0.0; group.add(prot);
+    // cheese
+    if(state.toppings.cheese){
+      const cheese = new THREE.Mesh(new THREE.SphereGeometry(1.4, 12, 8), new THREE.MeshStandardMaterial({ color: 0xFFD23F, roughness:0.5 }));
+      cheese.scale.set(1.3,0.25,0.7); cheese.position.y=0.35; cheese.position.x=0.15; group.add(cheese);
+    }
+    // guac
+    if(state.toppings.guac){
+      for(let i=0;i<4;i++){
+        const g = new THREE.Mesh(new THREE.SphereGeometry(0.28,8,8), new THREE.MeshStandardMaterial({color:0x84CC16}));
+        g.position.set( (Math.random()-0.5)*1.6, 0.55+Math.random()*0.15, (Math.random()-0.5)*1.0);
+        g.scale.set(1,0.8,1); group.add(g);
+      }
+    }
+    // pico (tomato+d onion)
+    if(state.toppings.pico){
+      for(let i=0;i<5;i++){
+        const c = i%2?0xEF4444:0xFFFFFF;
+        const p = new THREE.Mesh(new THREE.BoxGeometry(0.28,0.15,0.28), new THREE.MeshStandardMaterial({color:c}));
+        p.position.set((Math.random()-0.5)*1.4, 0.45+Math.random()*0.2, (Math.random()-0.5)*0.9);
+        p.rotation.set(Math.random(),Math.random(),Math.random()); group.add(p);
+      }
+    }
+    if(state.toppings.onion){
+      for(let i=0;i<3;i++){
+        const o = new THREE.Mesh(new THREE.TorusGeometry(0.18,0.05,6,12), new THREE.MeshStandardMaterial({color:0xE9D5FF}));
+        o.position.set((Math.random()-0.5)*1.2,0.6,(Math.random()-0.5)*0.7); o.rotation.x=Math.PI/2; group.add(o);
+      }
+    }
+    if(state.toppings.jalapeno){
+      for(let i=0;i<3;i++){
+        const j = new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.35,10), new THREE.MeshStandardMaterial({color:0x15803D}));
+        j.rotation.z=Math.PI/2; j.position.set((Math.random()-0.5)*1.2,0.65,(Math.random()-0.5)*0.6); group.add(j);
+      }
+    }
+    if(state.toppings.cilantro){
+      for(let i=0;i<6;i++){
+        const l = new THREE.Mesh(new THREE.SphereGeometry(0.09,6,6), new THREE.MeshStandardMaterial({color:0x22C55E}));
+        l.position.set((Math.random()-0.5)*1.6,0.7,(Math.random()-0.5)*0.9); l.scale.set(1.5,0.4,1); group.add(l);
+      }
+    }
+    // sauce drip
+    const sauceColors={ chipotle:0x7C2D12, verde:0x65A30D, habanero:0xDC2626 };
+    const sauce = new THREE.Mesh(new THREE.SphereGeometry(0.6,10,6), new THREE.MeshStandardMaterial({color:sauceColors[state.sauce], transparent:true, opacity:0.85}));
+    sauce.scale.set(1.8,0.2,0.9); sauce.position.y=0.78; sauce.position.x=0.2; group.add(sauce);
+  }
+
+  buildTaco();
+
+  function animate(){
+    requestAnimationFrame(animate);
+    if(auto) targetY += 0.004;
+    rotY += (targetY - rotY)*0.08;
+    group.rotation.y = rotY;
+    group.rotation.x = rotX;
+    // gentle float
+    group.position.y = Math.sin(Date.now()*0.001)*0.08;
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  return {
+    setAuto(v){ auto=v; },
+    getAuto(){ return auto; },
+    setView(v){
+      if(v==='top'){ targetY=0; rotX=1.2; camera.position.set(0,6,2); }
+      else if(v==='front'){ rotX=0.1; camera.position.set(0,1.5,8); targetY=0.3; }
+    },
+    spin(){ targetY+= Math.PI*2; auto=false; setTimeout(()=>auto=true, 2500); },
+    rebuild: buildTaco,
+    toggleAuto(){ auto=!auto; return auto; }
+  };
+}
+
+const heroScene = createTacoScene(document.getElementById('tacoCanvas'));
+const builderScene = createTacoScene(document.getElementById('builderCanvas'));
+
+// UI BINDINGS
+window.selectProtein = (p)=>{
+  state.protein=p;
+  document.querySelectorAll('.protein-btn').forEach(b=>{
+    b.classList.remove('bg-taco-orange','text-white'); b.classList.add('bg-white');
+    if(b.dataset.protein===p){ b.classList.add('bg-taco-orange','text-white'); b.classList.remove('bg-white'); }
+  });
+  heroScene.rebuild(); builderScene.rebuild(); updateBuilderInfo();
+};
+window.toggleTopping = (t)=>{
+  state.toppings[t]=!state.toppings[t];
+  document.querySelectorAll(`[data-topping="${t}"]`).forEach(b=>{
+    const on = state.toppings[t];
+    b.querySelector('div:last-child').textContent = on?'ON':'OFF';
+    b.style.opacity = on?'1':'0.6';
+    if(on){ b.classList.remove('bg-white'); if(t==='cheese') b.classList.add('bg-taco-yellow'); else if(t==='guac') b.classList.add('bg-taco-lime'); else if(t==='pico') b.classList.add('bg-red-400'); else b.classList.add('bg-green-200'); }
+    else { b.className = b.className.replace(/bg-taco-yellow|bg-taco-lime|bg-red-400|bg-green-200/g,'')+' bg-white'; }
+  });
+  // sync hero toppings buttons (builder has them)
+  heroScene.rebuild(); builderScene.rebuild(); updateBuilderInfo();
+};
+window.selectSauce = (s)=>{
+  state.sauce=s;
+  document.querySelectorAll('.sauce-btn').forEach(b=>{
+    b.classList.remove('bg-taco-brown','text-white'); b.classList.add('bg-white','text-taco-brown');
+    if(b.dataset.sauce===s){ b.classList.add('bg-taco-brown','text-white'); b.classList.remove('bg-white');}
+  });
+  heroScene.rebuild(); builderScene.rebuild(); updateBuilderInfo();
+};
+window.selectShell = (sh)=>{
+  state.shell=sh;
+  document.querySelectorAll('.shell-btn').forEach(b=>{
+    b.classList.remove('bg-taco-yellow'); b.classList.add('bg-white');
+    if(b.dataset.shell===sh) b.classList.add('bg-taco-yellow');
+  });
+  heroScene.rebuild(); builderScene.rebuild(); updateBuilderInfo();
+};
+window.updateHeat = (v)=>{
+  state.heat=parseInt(v);
+  document.getElementById('heatLabel').textContent = heatLabels[state.heat];
+};
+
+function calcPrice(){
+  let p = prices.base + (prices[state.protein]||0);
+  Object.values(state.toppings).forEach(on=>{ if(on) p+=prices.topping; });
+  if(state.sauce==='habanero') p+=0.3;
+  return p.toFixed(2);
+}
+function updateBuilderInfo(){
+  const names = { birria:'BIRRIA BOOM', alpastor:'AL PASTOR', carnitas:'CARNITAS', mushroom:'SHROOM' };
+  const title = names[state.protein]+' TACO';
+  document.getElementById('builderName').textContent = title;
+  document.getElementById('heroTacoName').textContent = title;
+  const desc = `${state.shell} • ${state.protein} • ${Object.entries(state.toppings).filter(([k,v])=>v).map(([k])=>k).join(' • ')} • ${state.sauce}`;
+  document.getElementById('builderDesc').textContent = desc;
+  const price = calcPrice();
+  document.getElementById('builderPrice').textContent = '$'+price;
+  document.getElementById('builderPriceBtn').textContent = '$'+price;
+  document.getElementById('heroTacoPrice').textContent = '$'+price+' • ~'+(380 + Object.values(state.toppings).filter(Boolean).length*25)+' cal';
+  document.getElementById('calories').textContent = '~ '+(380 + Object.values(state.toppings).filter(Boolean).length*25)+' CAL';
+}
+updateBuilderInfo();
+
+window.spinTaco = ()=>{ heroScene.spin(); builderScene.spin(); };
+window.setTacoView = (v)=>{ heroScene.setView(v); };
+window.autoRotateToggle = ()=>{
+  const on = heroScene.toggleAuto();
+  document.getElementById('autoBtn').classList.toggle('bg-taco-orange', on);
+  document.getElementById('autoBtn').classList.toggle('bg-taco-brown', !on);
+};
+window.randomizeTaco = ()=>{
+  const prots=['birria','alpastor','carnitas','mushroom'];
+  state.protein = prots[Math.floor(Math.random()*prots.length)];
+  Object.keys(state.toppings).forEach(k=> state.toppings[k]=Math.random()>0.4);
+  state.sauce = ['chipotle','verde','habanero'][Math.floor(Math.random()*3)];
+  state.shell = ['corn','flour','blue'][Math.floor(Math.random()*3)];
+  // update UI reflections
+  selectProtein(state.protein); selectSauce(state.sauce); selectShell(state.shell);
+  // toppings UI manual
+  document.querySelectorAll('.topping-btn').forEach(b=>{
+    const t=b.dataset.topping;
+    const on=state.toppings[t];
+    b.querySelector('div:last-child').textContent=on?'ON':'OFF';
+    b.style.opacity=on?'1':'0.6';
+  });
+  heroScene.rebuild(); builderScene.rebuild(); updateBuilderInfo(); spinTaco();
+};
+
+// CART
+window.addToCartCurrent = ()=>{
+  const name = document.getElementById('builderName').textContent + ' (Custom 3D)';
+  const price = parseFloat(calcPrice());
+  addItem(name, price);
+};
+window.addItem = (name, price)=>{
+  const existing = cart.find(c=>c.name===name);
+  if(existing) existing.qty++;
+  else cart.push({name, price, qty:1});
+  renderCart(); toggleCart(true);
+  showToast(`Added ${name} 🌮`);
+};
+function renderCart(){
+  const el=document.getElementById('cartItems');
+  const count=document.getElementById('cartCount');
+  const totalEl=document.getElementById('cartTotal');
+  const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  count.textContent = cart.reduce((s,c)=>s+c.qty,0);
+  totalEl.textContent = '$'+total.toFixed(2);
+  if(cart.length===0){
+    el.innerHTML=`<div class="text-center py-10 opacity-50"><div class="text-5xl mb-3">🛒</div><div class="font-black">Your cart is empty</div><div class="text-sm">Build a 3D taco and add it!</div></div>`;
+    return;
+  }
+  el.innerHTML = cart.map((c,i)=>`
+    <div class="bg-white border-2 border-taco-brown rounded-2xl p-4 flex items-center justify-between">
+      <div>
+        <div class="font-black text-sm">${c.name}</div>
+        <div class="text-xs font-bold opacity-60">$${c.price.toFixed(2)} each</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="changeQty(${i},-1)" class="w-8 h-8 rounded-full border-2 border-taco-brown flex items-center justify-center font-black">−</button>
+        <span class="font-black w-6 text-center">${c.qty}</span>
+        <button onclick="changeQty(${i},1)" class="w-8 h-8 rounded-full bg-taco-brown text-white flex items-center justify-center font-black">+</button>
+      </div>
+    </div>
+  `).join('');
+}
+window.changeQty=(i,d)=>{
+  cart[i].qty+=d;
+  if(cart[i].qty<=0) cart.splice(i,1);
+  renderCart();
+};
+let cartOpen=false;
+window.toggleCart=(force)=>{
+  const d=document.getElementById('cartDrawer');
+  if(typeof force==='boolean') cartOpen=force;
+  else cartOpen=!cartOpen;
+  d.classList.toggle('hidden', !cartOpen);
+};
+window.checkout=()=>{
+  if(cart.length===0) return showToast('Cart empty!');
+  showToast('Order placed! 🔥 Arriving in 12 min');
+  cart=[]; renderCart(); toggleCart(false);
+};
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.remove('hidden');
+  setTimeout(()=>t.classList.add('hidden'),2500);
+}
+</script>
+</body>
+</html>
